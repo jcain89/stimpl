@@ -141,8 +141,8 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
 
         case Multiply(left=left, right=right):
             result = 0
-            left_result, left_type, left_value = evaluate(left,state)
-            right_result, right_type, right_value = evaluate(right, state)
+            left_result, left_type, new_state = evaluate(left, state)
+            right_result, right_type, new_state = evaluate(right, new_state)
             if left_type != right_type:
                 raise InterpTypeError(f"""Mismatched types for multiply:
             Cannot multiply {left_type} to {right_type}""")
@@ -151,12 +151,12 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
                     result = left_result * right_result
                 case _:
                     raise(InterpError(f"""Cannot multiply {right_type}s"""))
-            return result
+            return (result, left_type, new_state)
 
         case Divide(left=left, right=right):
             result = 0
-            left_result, left_type, left_value = evaluate(left,state)
-            right_result, right_type, right_value = evaluate(right, state)
+            left_result, left_type, new_state = evaluate(left, state)
+            right_result, right_type, new_state = evaluate(right, new_state)
             if left_type != right_type:
                 raise InterpTypeError(f"""Mismatched types for divide:
             Cannot divide {left_type} to {right_type}""")
@@ -167,7 +167,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
                     result = left_result / right_result
                 case _:
                     raise(InterpError(f"""Cannot divide {right_type}s"""))
-            return result
+            return (result, left_type, new_state)
 
         case And(left=left, right=right):
             left_value, left_type, new_state = evaluate(left, state)
