@@ -375,16 +375,16 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
 
         #Case for while only works when condition is of type boolean
         case While(condition=condition, body=body):
-            condition_value, condition_type, condition_next_state = evaluate(condition, state)
-            body_value, body_type, body_next_state = evaluate(body, state)
-            match condition_type:
+            value_condition, value_condition_type, new_state = evaluate(condition, state)
+            match value_condition_type:
                 case Boolean():
-                    while(condition_value == True):
-                        body_value, body_type, body_next_state = evaluate(body,body_next_state)
-                        condition_value, condition_type, condition_next_state = evaluate(condition, body_next_state)
+                    while value_condition:
+                        new_value, new_value_type, new_state = evaluate(body, new_state)
+                        value_condition, value_condition_type, new_state = evaluate(condition, new_state)
                 case _:
-                    raise(InterpTypeError)
-            return (body_value, body_type, body_next_state)
+                    raise InterpTypeError(f"Cannot perform while loop with non-boolean operand")
+        
+            return (False, Boolean(), new_state)
                             
                     
 
