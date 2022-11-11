@@ -81,8 +81,11 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
             return (printable_value, printable_type, new_state)
 
         case Sequence(exprs=exprs) | Program(exprs=exprs):
-            """ TODO: Implement. """
-            pass
+            if exprs == ():
+                return (None, Unit(), None)
+            for expr in exprs:
+                expr_value, expr_type, state = evaluate(expr, state)
+            return (expr_value, expr_type, state)
 
         case Variable(variable_name=variable_name):
             value = state.get_value(variable_name)
@@ -137,7 +140,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
                     result = left_result - right_result
                 case _:
                     raise InterpTypeError(f"""Cannot subtract {left_type}s""")
-            return (result, left_type, right_type)
+            return (result, left_type, new_state)
 
         case Multiply(left=left, right=right):
             result = 0
@@ -217,9 +220,16 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
 
 
         case If(condition=condition, true=true, false=false):
-            condition_value, new_state = evaluate(condition,state)
-            if condition_value == true:
-                return (condition_value, Boolean(), new_state)
+            condition_value, condition_type, new_state = evaluate(condition,state)
+            match condition_type:
+                case Boolean():
+                    true_value, true_type, true_new_state = evaluate(true, new_state)
+                    false_value, false_type, false_new_state = evaluate(false, new_state)
+                    if condition_value == True:
+                        return (true_value, true_type, true_new_state)
+                    return (false_value, false_type, false_new_state)
+                case _:
+                    raise(InterpTypeError)
 
         case Lt(left=left, right=right):
             left_value, left_type, new_state = evaluate(left, state)
@@ -352,8 +362,17 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
             return (result, Boolean(), new_state)
 
         case While(condition=condition, body=body):
-            while(condition == true):
-                evaluate(body, state)
+            condition_value, condition_type, condition_next_state = evaluate(condition, state)
+            body_value, body_type, body_next_state = evaluate(body, state)
+            match condition_type:
+                case Boolean():
+                    while(condition):
+                        evaluate(body_value, body_next_state)
+                case _:
+                    raise(InterpTypeError)
+            return (result, body_type, body_next_state)
+                            
+                    
 
         case _:
             raise InterpSyntaxError("Unhandled!")
