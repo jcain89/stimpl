@@ -174,8 +174,8 @@ def run_stimpl_sanity_tests():
         program = Lt(StringLiteral("alpha"), StringLiteral("beta"))
         check_run_result((True, Boolean(), None), run_stimpl(program))
 
-        #program = Lte(Ren(), Ren())
-        #check_run_result((True, Boolean(), None), run_stimpl(program))
+        program = Lte(Ren(), Ren())
+        check_run_result((True, Boolean(), None), run_stimpl(program))
         program = Lte(BooleanLiteral(True), BooleanLiteral(True))
         check_run_result((True, Boolean(), None), run_stimpl(program))
         program = Lte(IntLiteral(12), IntLiteral(12))
@@ -185,8 +185,8 @@ def run_stimpl_sanity_tests():
         program = Lte(StringLiteral("beta"), StringLiteral("beta"))
         check_run_result((True, Boolean(), None), run_stimpl(program))
 
-        #program = Eq(Ren(), Ren())
-        #check_run_result((True, Boolean(), None), run_stimpl(program))
+        program = Eq(Ren(), Ren())
+        check_run_result((True, Boolean(), None), run_stimpl(program))
         program = Eq(BooleanLiteral(True), BooleanLiteral(True))
         check_run_result((True, Boolean(), None), run_stimpl(program))
         program = Eq(IntLiteral(12), IntLiteral(12))
@@ -218,8 +218,8 @@ def run_stimpl_sanity_tests():
         program = Gt(StringLiteral("alpha"), StringLiteral("beta"))
         check_run_result((False, Boolean(), None), run_stimpl(program))
 
-        #program = Gte(Ren(), Ren())
-        #check_run_result((True, Boolean(), None), run_stimpl(program))
+        program = Gte(Ren(), Ren())
+        check_run_result((True, Boolean(), None), run_stimpl(program))
         program = Gte(BooleanLiteral(True), BooleanLiteral(True))
         check_run_result((True, Boolean(), None), run_stimpl(program))
         program = Gte(IntLiteral(12), IntLiteral(12))

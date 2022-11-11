@@ -231,8 +231,8 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
                 raise InterpTypeError(f"""Mismatched types for Lt:
             Cannot compare {left_type} to {right_type}""")
             match left_type:
-                case Ren():
-                    result = true
+                case Unit():
+                    result = False
                 case Integer() | Boolean() | String() | FloatingPoint():
                     result = left_value < right_value
                 case Unit():
@@ -254,7 +254,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
             Cannot compare {left_type} to {right_type}""")
 
             match left_type:
-                case Ren():
+                case Unit():
                     result = True
                 case Integer() | Boolean() | String() | FloatingPoint():
                     result = left_value <= right_value
@@ -302,7 +302,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
                 case Integer() | Boolean() | String() | FloatingPoint():
                     result = left_value >= right_value
                 case Unit():
-                    result = False
+                    result = True
                 case _:
                     raise InterpTypeError(
                         f"Cannot perform >= on {left_type} type.")
@@ -323,7 +323,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
                 case Integer() | Boolean() | String() | FloatingPoint():
                     result = left_value == right_value
                 case Unit():
-                    result = False
+                    result = True
                 case _:
                     raise InterpTypeError(
                         f"Cannot perform Ne on {left_type} type.")
