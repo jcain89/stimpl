@@ -158,10 +158,10 @@ def run_stimpl_sanity_tests():
         program = Or(BooleanLiteral(False), BooleanLiteral(True))
         check_run_result((True, Boolean(), None), run_stimpl(program))
 
-        #program = Not(BooleanLiteral(True))
-        #check_run_result((False, Boolean(), None), run_stimpl(program))
-        #program = Not(BooleanLiteral(False))
-        #check_run_result((True, Boolean(), None), run_stimpl(program))
+        program = Not(BooleanLiteral(True))
+        check_run_result((False, Boolean(), None), run_stimpl(program))
+        program = Not(BooleanLiteral(False))
+        check_run_result((True, Boolean(), None), run_stimpl(program))
 
         program = Lt(Ren(), Ren())
         check_run_result((False, Boolean(), None), run_stimpl(program))

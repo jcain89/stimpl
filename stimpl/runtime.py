@@ -206,13 +206,13 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
             return (result, left_type, new_state)
 
         case Not(expr=expr):
-            value, type, new_state = evaluate(expr, state)
-            match type:
+            expr_value, expr_type, expr_new_state = evaluate(expr, state)
+            match expr_type:
                 case Boolean():
-                    result = not value
+                    result = not expr_value
                 case _:
-                    raise InterpTypeError(f"""Cannot multiply {type}s""")
-            return (result, type, new_state)
+                    raise InterpTypeError(f"""Cannot not {expr_type}s""")
+            return (result, expr_type, expr_new_state)
 
 
 
