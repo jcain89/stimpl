@@ -80,6 +80,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
 
             return (printable_value, printable_type, new_state)
 
+        #Case for sequence loops through and evaluates expressions
         case Sequence(exprs=exprs) | Program(exprs=exprs):
             if exprs == ():
                 return (None, Unit(), None)
@@ -111,6 +112,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
                 variable.variable_name, value_result, value_type)
             return (value_result, value_type, new_state)
 
+        #Case for adding only works on int floating point and string
         case Add(left=left, right=right):
             result = 0
             left_result, left_type, new_state = evaluate(left, state)
@@ -128,6 +130,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
 
             return (result, left_type, new_state)
 
+        #Case for subtraction only works on int and floating point
         case Subtract(left=left, right=right):
             result = 0
             left_result, left_type, new_state = evaluate(left, state)
@@ -142,6 +145,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
                     raise InterpTypeError(f"""Cannot subtract {left_type}s""")
             return (result, left_type, new_state)
 
+        #Case for multiplication only works on ints and floating points
         case Multiply(left=left, right=right):
             result = 0
             left_result, left_type, new_state = evaluate(left, state)
@@ -159,6 +163,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
                     raise InterpTypeError(f"""Cannot multiply {left_type}s""")
             return (result, left_type, new_state)
 
+        #Case for division only works on int and floating points but the division cases are slightly different
         case Divide(left=left, right=right):
             result = 0
             left_result, left_type, new_state = evaluate(left, state)
@@ -177,6 +182,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
                     raise InterpTypeError(f"""Cannot divide {left_type}s""")
             return (result, left_type, new_state)
 
+        #Case for ands only works on boolean types
         case And(left=left, right=right):
             left_value, left_type, new_state = evaluate(left, state)
             right_value, right_type, new_state = evaluate(right, new_state)
@@ -193,6 +199,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
 
             return (result, left_type, new_state)
 
+        #Case for Ors only works on boolean types
         case Or(left=left, right=right):
             left_value, left_type, new_state = evaluate(left, state)
             right_value, right_type, new_state = evaluate(right, new_state)
@@ -208,6 +215,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
                         "Cannot perform logical or on non-boolean operands.")
             return (result, left_type, new_state)
 
+        #Case for nots only works on boolean types
         case Not(expr=expr):
             expr_value, expr_type, expr_new_state = evaluate(expr, state)
             match expr_type:
@@ -218,7 +226,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
             return (result, expr_type, expr_new_state)
 
 
-
+        #Case for Ifs only works on condition type booolean
         case If(condition=condition, true=true, false=false):
             condition_value, condition_type, new_state = evaluate(condition,state)
             match condition_type:
@@ -231,6 +239,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
                 case _:
                     raise(InterpTypeError)
 
+        #Case for Less Than only works on int, boolean, string, and floating points if unit its false
         case Lt(left=left, right=right):
             left_value, left_type, new_state = evaluate(left, state)
             right_value, right_type, new_state = evaluate(right, new_state)
@@ -241,8 +250,6 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
                 raise InterpTypeError(f"""Mismatched types for Lt:
             Cannot compare {left_type} to {right_type}""")
             match left_type:
-                case Unit():
-                    result = False
                 case Integer() | Boolean() | String() | FloatingPoint():
                     result = left_value < right_value
                 case Unit():
@@ -253,6 +260,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
 
             return (result, Boolean(), new_state)
 
+        #Case for less than or equal to only works on int, boolean, string, floating points if unit its true
         case Lte(left=left, right=right):
             left_value, left_type, new_state = evaluate(left, state)
             right_value, right_type, new_state = evaluate(right, new_state)
@@ -276,6 +284,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
 
             return (result, Boolean(), new_state)
 
+        #Case for greater than only works on int, boolean, string, floating point, if unit its false
         case Gt(left=left, right=right):
             left_value, left_type, new_state = evaluate(left, state)
             right_value, right_type, new_state = evaluate(right, new_state)
@@ -297,7 +306,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
 
             return (result, Boolean(), new_state)
             
-
+        #Case for Greater than or equal to only works on int, boolean, string, floating point, if unit its true
         case Gte(left=left, right=right):
             left_value, left_type, new_state = evaluate(left, state)
             right_value, right_type, new_state = evaluate(right, new_state)
@@ -319,6 +328,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
 
             return (result, Boolean(), new_state)
 
+        #Case for equals only works on int, boolean, string, floating point, if unit its true
         case Eq(left=left, right=right):
             left_value, left_type, new_state = evaluate(left, state)
             right_value, right_type, new_state = evaluate(right, new_state)
@@ -340,6 +350,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
 
             return (result, Boolean(), new_state)
 
+        #Case for not equal to only works on int, boolean, string, floating point, if unit its false
         case Ne(left=left, right=right):
             left_value, left_type, new_state = evaluate(left, state)
             right_value, right_type, new_state = evaluate(right, new_state)
@@ -361,6 +372,7 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
 
             return (result, Boolean(), new_state)
 
+        #Case for while only works when condition is of type boolean
         case While(condition=condition, body=body):
             condition_value, condition_type, condition_next_state = evaluate(condition, state)
             body_value, body_type, body_next_state = evaluate(body, state)
