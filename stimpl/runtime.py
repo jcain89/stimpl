@@ -366,11 +366,12 @@ def evaluate(expression: Expr, state: State) -> Tuple[Optional[Any], Type, State
             body_value, body_type, body_next_state = evaluate(body, state)
             match condition_type:
                 case Boolean():
-                    while(condition):
-                        evaluate(body_value, body_next_state)
+                    while(condition_value == True):
+                        body_value, body_type, body_next_state = evaluate(body,body_next_state)
+                        condition_value, condition_type, condition_next_state = evaluate(condition, body_next_state)
                 case _:
                     raise(InterpTypeError)
-            return (result, body_type, body_next_state)
+            return (body_value, body_type, body_next_state)
                             
                     
 
