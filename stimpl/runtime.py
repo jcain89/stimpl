@@ -22,6 +22,7 @@ class State(object):
     def set_value(self, variable_name, variable_value, variable_type):
         return State(variable_name, variable_value, variable_type, self)
 
+    #go through states and check if I match the variable name then return the value if thats true
     def get_value(self, variable_name) -> Any:
         if self.variable_name == variable_name:
             return self.value
